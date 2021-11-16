@@ -12,16 +12,14 @@ on:
 
 jobs:
   publish:
-    name: build, pack & publish
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
-      - name: publish on version change
-        id: publish_nuget
-        uses: rohith/publish-nuget@v2
+      - uses: rohith/publish-nuget@v2
         with:
-          PROJECT_FILE_PATH: "${{env.NUGET_PROJECT_DIR}}"
-          NUGET_KEY: "${{secrets.GITHUB_TOKEN}}"
+          PROJECT_FILE_PATH: ${{env.NUGET_PROJECT_DIR}}
+          NUGET_SOURCE: ${{env.NUGET_SOURCE_URL}}
+          NUGET_KEY: ${{secrets.GITHUB_TOKEN}}
