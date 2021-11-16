@@ -5,9 +5,9 @@ env:
   NUGET_PROJECT_DIR: src/To/To.csproj
 
 on:
-  push:
-    branches:
-      - master
+  create:
+    tags:
+      - v*
   workflow_dispatch:
 
 jobs:
