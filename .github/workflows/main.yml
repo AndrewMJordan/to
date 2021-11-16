@@ -18,10 +18,10 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '6.0.x'
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - uses: rohith/publish-nuget@v2
         with:
           PROJECT_FILE_PATH: ${{env.NUGET_PROJECT_DIR}}
           NUGET_SOURCE: ${{env.NUGET_SOURCE_URL}}
           NUGET_KEY: ${{secrets.GITHUB_TOKEN}}
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
