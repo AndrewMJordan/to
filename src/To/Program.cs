@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text.RegularExpressions;
 
 class Program
 {
@@ -45,10 +44,20 @@ class Program
     {
         try
         {
-            Process.Start(url);
+            var browser = Environment.GetEnvironmentVariable("BROWSER");
+
+            if (string.IsNullOrEmpty(browser))
+            {
+                Process.Start(url);
+            }
+            else
+            {
+                Process.Start(browser, url);
+            }
         }
         catch
         {
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 url = url.Replace("&", "^&");
