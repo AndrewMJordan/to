@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
-		<Version>0.1.0.2</Version>
+		<Version>0.1.0.3</Version>
 		<Authors>AndrewMJordan</Authors>
 		<Company>AndrewMJordan</Company>
 		<StartupObject>Program</StartupObject>
