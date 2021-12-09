@@ -1,80 +1,107 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using System.Web;
 
-class Program
+namespace Andtech.To
 {
 
-    static void Main(string[] tokens)
+    internal class Rank
     {
-        var query = string.Join(" ", tokens);
+        public Hotspot Hotspot { get; private set;}
+        public string[] Keywords { get; private set; }
+        public int MatchCount { get; private set; }
 
-        if (!TryLaunch(query))
+        public static Rank ToRank(Hotspot hotspot, string query)
         {
-            Console.Error.WriteLine($"No results for '{query}'");
+            var keywords = hotspot.Keywords?.Split(',') ?? ExtractKeywords(hotspot.URL);
+
+            return new Rank()
+			{
+                Hotspot = hotspot,
+                Keywords = keywords,
+                MatchCount = GetKeywordMatchCount(hotspot),
+			};
+
+            int GetKeywordMatchCount(Hotspot hotspot)
+            {
+                var count = keywords.Count(keyword => query.Contains(keyword));
+
+                return count;
+            }
+
+            string[] ExtractKeywords(string url)
+            {
+                url = url.Replace("https://", string.Empty);
+                url = url.Replace(".com", string.Empty);
+                return url.Split('/', StringSplitOptions.RemoveEmptyEntries);
+            }
         }
     }
 
-    public static bool TryLaunch(string query)
+	class Program
     {
-        var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "hotspots.csv");
-        var content = File.ReadAllLines(path);
-        foreach (var line in content)
-        {
-            try
-            {
-                var values = line.Split(",", StringSplitOptions.RemoveEmptyEntries);
-                var name = values[0];
-                var url = values[1];
 
-                if (name == query)
+        static void Main(string[] tokens)
+        {
+            var input = string.Join(" ", tokens);
+
+            var hotspotMatch = Regex.Match(input, @"^(?<value>[^/?]+)");
+            var suffixMatch = Regex.Match(input, @"/(?<value>.+)");
+            var searchMatch = Regex.Match(input, @"\?(?<value>.+)");
+
+            var hotspotString = hotspotMatch.Groups["value"].Value.Trim();
+            var suffixString = suffixMatch.Success ? suffixMatch.Groups["value"].Value.Trim() : null;
+            var searchString = searchMatch.Success ? searchMatch.Groups["value"].Value.Trim() : null;
+
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "to.json");
+            var content = File.ReadAllText(path);
+
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var hotspots = JsonSerializer.Deserialize<Hotspot[]>(content, options);
+
+            var results = hotspots
+                .Select(x => Rank.ToRank(x, hotspotString))
+                .OrderByDescending(x => x.MatchCount)
+                .ThenByDescending(x => (double)x.MatchCount / x.Keywords.Length);
+
+            if (results.Any(x => x.MatchCount > 0))
+            {
+                var hotspot = results.First().Hotspot;
+                string url;
+                if (searchString is null || string.IsNullOrEmpty(hotspot.SearchURL))
                 {
-                    OpenBrowser(url);
-                    return true;
+                    url = hotspot.URL;
                 }
-            }
-            catch { }
-        }
+                else
+                {
+                    var query = searchString;
+                    query = HttpUtility.UrlEncode(query);
+                    url = Regex.Replace(hotspot.SearchURL, "%{query}", query);
+				}
 
-        return false;
-    }
+                if (suffixString != null)
+				{
+                    url = $"{url}/{suffixString}";
+				}
 
-    public static void OpenBrowser(string url)
-    {
-        try
-        {
-            var browser = Environment.GetEnvironmentVariable("BROWSER");
-
-            if (string.IsNullOrEmpty(browser))
-            {
-                Process.Start(url);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(url);
+                //ShellUtility.OpenBrowser(url);
             }
             else
             {
-                Process.Start(browser, url);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("No matches");
             }
+            Console.ResetColor();
         }
-        catch
-        {
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                url = url.Replace("&", "^&");
-                Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Process.Start("xdg-open", url);
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            {
-                Process.Start("open", url);
-            }
-            else
-            {
-                throw;
-            }
-        }
+        static bool IsPrefixOf(string x, string full) => Regex.IsMatch(full, $@"^{x}.*");
     }
 }
+
