@@ -24,7 +24,7 @@
 		<FileVersion>0.1.1.0</FileVersion>
 		<Product>To</Product>
 		<RepositoryUrl>https://github.com/AndrewMJordan/to</RepositoryUrl>
-		<RootNamespace>To</RootNamespace>
+		<RootNamespace>Andtech.To</RootNamespace>
 		<Company>AndrewMJordan</Company>
 		<Authors>AndrewMJordan</Authors>
 	</PropertyGroup>
@@ -38,6 +38,7 @@
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	</PropertyGroup>
 	<ItemGroup>
+	  <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
 	  <PackageReference Include="FuzzySharp" Version="2.0.2" />
 	  <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
 	</ItemGroup>
