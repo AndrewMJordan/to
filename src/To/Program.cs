@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -59,13 +60,32 @@ namespace Andtech.To
 			};
 		}
 
-		static Hotspot[] ReadHotspots()
+		static List<Hotspot> ReadHotspots()
 		{
-			var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "to.json");
-			var content = File.ReadAllText(path);
+			var prefix = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+			var toFile = Path.Combine(prefix, "to.json");
+			var toDirectory = Path.Combine(prefix, ".to");
 
-			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-			return JsonSerializer.Deserialize<Hotspot[]>(content, options);
+			List<string> toFiles = new List<string>();
+			if (Directory.Exists(toDirectory))
+			{
+				var files = Directory.EnumerateFiles(toDirectory, "*.json", SearchOption.AllDirectories);
+				toFiles.AddRange(files);
+			}
+			else if (File.Exists(toFile))
+			{
+				toFiles.Add(toFile);
+			}
+
+			return toFiles.SelectMany(ReadHotspot).ToList();
+
+			Hotspot[] ReadHotspot(string path)
+			{
+				var content = File.ReadAllText(path);
+
+				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+				return JsonSerializer.Deserialize<Hotspot[]>(content, options);
+			}
 		}
 
 		static void Open(Hotspot hotspot, Query query)
