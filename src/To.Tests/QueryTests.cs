@@ -9,27 +9,19 @@ namespace Andtech.To.Tests
 
 	public class Tests
 	{
-		private Hotspot[] hotspots;
+		private Session session;
 
 		[SetUp]
 		public void InitializeHotspots()
 		{
 			Environment.SetEnvironmentVariable("ANDTECH_TO_PATH", "TestFiles:TestFiles/hotspots", EnvironmentVariableTarget.Process);
-			var toPath = Environment.GetEnvironmentVariable("ANDTECH_TO_PATH", EnvironmentVariableTarget.Process);
-			var directories = toPath.Split(':', StringSplitOptions.RemoveEmptyEntries);
-			var hotspots = new List<Hotspot>();
-			foreach (var directory in directories)
-			{
-				var files = Directory.EnumerateFiles(directory, "*.json", SearchOption.AllDirectories);
-				hotspots.AddRange(files.SelectMany(Hotspot.Read));
-			}
-			this.hotspots = hotspots.ToArray();
+			session = Session.Load();
 		}
 
 		[Test]
 		public void SearchMiscellaneousHotspots()
 		{
-			Assert.IsTrue(hotspots.Any(x => x.URL == "https://youtube.com"));
+			Assert.IsTrue(session.Hotspots.Any(x => x.URL == "https://youtube.com"));
 		}
 
 		[Test]
@@ -37,7 +29,7 @@ namespace Andtech.To.Tests
 		{
 			var query = Query.Parse("meta cortex");
 			var selector = new HotspotSelector();
-			var ranks = selector.Order(hotspots, query);
+			var ranks = selector.Order(session.Hotspots, query);
 
 			var first = ranks.First();
 
@@ -49,7 +41,7 @@ namespace Andtech.To.Tests
 		{
 			var query = Query.Parse("github meta cortex");
 			var selector = new HotspotSelector();
-			var ranks = selector.Order(hotspots, query);
+			var ranks = selector.Order(session.Hotspots, query);
 
 			var first = ranks.First();
 
@@ -57,11 +49,11 @@ namespace Andtech.To.Tests
 		}
 
 		[Test]
-		public void SearchWithExtension()
+		public void SearchWithDomainExtension()
 		{
 			var query = Query.Parse("meta cortex org");
 			var selector = new HotspotSelector();
-			var ranks = selector.Order(hotspots, query);
+			var ranks = selector.Order(session.Hotspots, query);
 
 			var first = ranks.First();
 
@@ -69,11 +61,11 @@ namespace Andtech.To.Tests
 		}
 
 		[Test]
-		public void SearchWithSubdomain()
+		public void SearchWithDomainSubdomain()
 		{
 			var query = Query.Parse("oss meta cortex");
 			var selector = new HotspotSelector();
-			var ranks = selector.Order(hotspots, query);
+			var ranks = selector.Order(session.Hotspots, query);
 
 			var first = ranks.First();
 
@@ -85,7 +77,7 @@ namespace Andtech.To.Tests
 		{
 			var query = Query.Parse("snip");
 			var selector = new HotspotSelector();
-			var ranks = selector.Order(hotspots, query);
+			var ranks = selector.Order(session.Hotspots, query);
 
 			var first = ranks.First();
 

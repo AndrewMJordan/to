@@ -25,8 +25,10 @@ namespace Andtech.To
 			var input = string.Join(" ", options.Tokens);
 			var query = Query.Parse(input);
 
+			var session = Session.Load();
+
 			var selector = new HotspotSelector();
-			var ranks = selector.Order(ReadHotspots(), query);
+			var ranks = selector.Order(session.Hotspots, query);
 
 			if (options.List)
 			{
@@ -46,26 +48,6 @@ namespace Andtech.To
 				Console.WriteLine("No matches");
 				Console.ResetColor();
 			}
-		}
-
-		static List<Hotspot> ReadHotspots()
-		{
-			var prefix = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-			var toFile = Path.Combine(prefix, "to.json");
-			var toDirectory = Path.Combine(prefix, ".to");
-
-			List<string> toFiles = new List<string>();
-			if (Directory.Exists(toDirectory))
-			{
-				var files = Directory.EnumerateFiles(toDirectory, "*.json", SearchOption.AllDirectories);
-				toFiles.AddRange(files);
-			}
-			else if (File.Exists(toFile))
-			{
-				toFiles.Add(toFile);
-			}
-
-			return toFiles.SelectMany(Hotspot.Read).ToList();
 		}
 
 		void Open(Hotspot hotspot, Query query)
