@@ -37,7 +37,7 @@ namespace Andtech.To
 				}
 			}
 
-			if (ranks.Any(x => x.FuzzyMatchCount > 0))
+			if (ranks.Any(x => x.CountOfHotspotKeywordsAreFuzzy > 0))
 			{
 				Open(ranks.First().Hotspot, query);
 			}

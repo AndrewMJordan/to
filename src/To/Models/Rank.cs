@@ -9,14 +9,14 @@ namespace Andtech.To
 	{
 		public Hotspot Hotspot { get; private set; }
 		public string[] Keywords { get; private set; }
-		public int PrefixMatchCount { get; private set; }
-		public int FuzzyMatchCount { get; private set; }
-		public int ExactMatchCount { get; private set; }
+		public int CountOfHotspotKeywordsArePrefix { get; private set; }
+		public int CountOfHotspotKeywordsAreFuzzy { get; private set; }
+		public int CountOfHotspotKeywordsAreExact { get; private set; }
 		public int CountOfQueryKeywordsArePrefix { get; set; }
 		public int CountOfQueryKeywordsAreFuzzy { get; set; }
 		public int CountOfQueryKeywordsAreExact { get; set; }
 		public int Score { get; private set; }
-		public double Accuracy => (double)FuzzyMatchCount / Keywords.Length;
+		public double Accuracy => (double)CountOfHotspotKeywordsAreFuzzy / Keywords.Length;
 
 		public static Rank ToRank(Hotspot hotspot, Query query)
 		{
@@ -34,9 +34,9 @@ namespace Andtech.To
 			{
 				Hotspot = hotspot,
 				Keywords = keywords,
-				PrefixMatchCount = CountPrefixMatches(),
-				FuzzyMatchCount = CountFuzzyMatches(),
-				ExactMatchCount = CountExactMatches(),
+				CountOfHotspotKeywordsArePrefix = CountPrefixMatches(),
+				CountOfHotspotKeywordsAreFuzzy = CountFuzzyMatches(),
+				CountOfHotspotKeywordsAreExact = CountExactMatches(),
 				Score = GetScore(),
 			};
 
