@@ -11,6 +11,7 @@ namespace Andtech.To
 		{
 			return hotspots
 				.Select(x => Rank.ToRank(x, query))
+				.Where(x => x.CountOfQueryKeywordsAreFuzzy > 0)
 				.OrderByDescending(x => x.CountOfQueryKeywordsAreFuzzy)
 				.ThenByDescending(x => x.CountOfQueryKeywordsAreExact)
 				.ThenByDescending(x => x.Score);

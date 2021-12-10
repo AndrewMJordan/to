@@ -70,7 +70,7 @@ namespace Andtech.To
 
 		static string[] ExtractKeywords(string url)
 		{
-			url = Regex.Replace(url, @"http(s)?", string.Empty);
+			url = Regex.Replace(url, @"^http(s)?://", string.Empty);
 
 			return Regex.Split(url, "[/.]").Select(x => x.Trim()).ToArray();
 		}
