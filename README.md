@@ -1,5 +1,9 @@
 # To
 
+> Navigate anywhere on the internet from a terminal
+
+![badge](https://img.shields.io/github/v/tag/andtechstudios/to)
+
 # Installation
 > Check out installation instructions [here](https://gitlab.com/andtech/pkg)
 
