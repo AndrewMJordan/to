@@ -3,9 +3,9 @@
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
 		<TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
-		<Version>0.1.1.0</Version>
-		<Authors>AndrewMJordan</Authors>
-		<Company>AndrewMJordan</Company>
+		<Version>0.2.0.0</Version>
+		<Authors>Andtech Studios</Authors>
+		<Company>Andtech Studios</Company>
 		<StartupObject></StartupObject>
 	</PropertyGroup>
 
@@ -20,13 +20,13 @@
 		<RepositoryType></RepositoryType>
 		<PackageLicenseExpression></PackageLicenseExpression>
 		<AssemblyName>To</AssemblyName>
-		<AssemblyVersion>0.1.1.0</AssemblyVersion>
-		<FileVersion>0.1.1.0</FileVersion>
+		<AssemblyVersion>0.2.0.0</AssemblyVersion>
+		<FileVersion>0.2.0.0</FileVersion>
 		<Product>To</Product>
 		<RepositoryUrl>https://github.com/AndrewMJordan/to</RepositoryUrl>
 		<RootNamespace>Andtech.To</RootNamespace>
-		<Company>AndrewMJordan</Company>
-		<Authors>AndrewMJordan</Authors>
+		<Company>Andtech Studios</Company>
+		<Authors>Andtech Studios</Authors>
 	</PropertyGroup>
 
 	<!-- Dotnet Tool settings -->
