@@ -1,8 +1,8 @@
 # To
 
-> Navigate anywhere on the internet from a terminal
+*Navigate anywhere on the internet from a terminal*
 
-![badge](https://img.shields.io/github/v/tag/andtechstudios/to)
+[![badge](https://img.shields.io/github/v/tag/andtechstudios/to?label=nuget)](https://gitlab.com/andtech/pkg/-/packages)
 
 # Installation
 > Check out installation instructions [here](https://gitlab.com/andtech/pkg)
