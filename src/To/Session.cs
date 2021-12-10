@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 namespace Andtech.To
 {
@@ -10,12 +11,14 @@ namespace Andtech.To
 	{
 		public Hotspot[] Hotspots { get; set; }
 
+		private static readonly char PathDelimiter = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ';' : ':';
+
 		public static Session Load()
 		{
 			var hotspots = new List<Hotspot>();
 
 			var path = Environment.GetEnvironmentVariable("ANDTECH_TO_PATH", EnvironmentVariableTarget.Process);
-			var directories = path.Split(':', StringSplitOptions.RemoveEmptyEntries);
+			var directories = string.IsNullOrEmpty(path) ? Enumerable.Empty<string>() : path.Split(PathDelimiter, StringSplitOptions.RemoveEmptyEntries);
 			var toFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "to.json");
 
 			if (File.Exists(toFile))

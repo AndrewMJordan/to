@@ -28,9 +28,12 @@ namespace Andtech.To
 
 			if (options.List)
 			{
+
+				Console.WriteLine($"Q fuz H\tQ ex H\tAcc\tURL");
 				foreach (var rank in ranks.Take(5))
 				{
-					Console.WriteLine($"{rank.FuzzyMatchCount}\t{rank.Accuracy}\t{rank.Hotspot.URL}");
+					var accuracy = Math.Round(rank.Accuracy * 100);
+					Console.WriteLine($"{rank.CountOfQueryKeywordsAreFuzzy}\t{rank.CountOfQueryKeywordsAreExact}\t{accuracy}%\t{rank.Hotspot.URL}");
 				}
 			}
 

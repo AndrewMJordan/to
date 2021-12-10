@@ -9,8 +9,12 @@ namespace Andtech.To
 	{
 		public Hotspot Hotspot { get; private set; }
 		public string[] Keywords { get; private set; }
+		public int PrefixMatchCount { get; private set; }
 		public int FuzzyMatchCount { get; private set; }
 		public int ExactMatchCount { get; private set; }
+		public int CountOfQueryKeywordsArePrefix { get; set; }
+		public int CountOfQueryKeywordsAreFuzzy { get; set; }
+		public int CountOfQueryKeywordsAreExact { get; set; }
 		public int Score { get; private set; }
 		public double Accuracy => (double)FuzzyMatchCount / Keywords.Length;
 
@@ -30,14 +34,21 @@ namespace Andtech.To
 			{
 				Hotspot = hotspot,
 				Keywords = keywords,
+				PrefixMatchCount = CountPrefixMatches(),
 				FuzzyMatchCount = CountFuzzyMatches(),
 				ExactMatchCount = CountExactMatches(),
 				Score = GetScore(),
 			};
 
+			rank.CountOfQueryKeywordsArePrefix = query.Keywords.Count(x => keywords.Any(y => IsPrefixOf(x, y)));
+			rank.CountOfQueryKeywordsAreFuzzy = query.Keywords.Count(x => keywords.Any(y => y.Contains(x)));
+			rank.CountOfQueryKeywordsAreExact = query.Keywords.Count(x => keywords.Any(y => x == y));
+
 			return rank;
 
 			int CountExactMatches() => keywords.Count(keyword => query.Keywords.Any(queryKeyword => keyword == queryKeyword));
+
+			int CountPrefixMatches() => keywords.Count(keyword => query.Keywords.Any(queryKeyword => IsPrefixOf(queryKeyword, keyword)));
 
 			int CountFuzzyMatches() => keywords.Count(keyword => query.Keywords.Any(queryKeyword => keyword.Contains(queryKeyword)));
 
@@ -59,10 +70,12 @@ namespace Andtech.To
 
 		static string[] ExtractKeywords(string url)
 		{
-			url = Regex.Replace(url, @"http(s)?://(www)?", string.Empty);
+			url = Regex.Replace(url, @"http(s)?", string.Empty);
 
-			return url.Split("/").Select(x => x.Trim()).ToArray();
+			return Regex.Split(url, "[/.]").Select(x => x.Trim()).ToArray();
 		}
+
+		static bool IsPrefixOf(string x, string expected) => Regex.IsMatch(expected, $@"^{x}.*");
 	}
 }
 

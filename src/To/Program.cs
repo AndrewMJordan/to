@@ -1,4 +1,5 @@
 ﻿using CommandLine;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -29,9 +30,16 @@ namespace Andtech.To
 
 		public static async Task OnParse(Options options)
 		{
-			var runner = new Runner(options);
-
-			await runner.Run();
+			try
+			{
+				var runner = new Runner(options);
+				await runner.Run();
+			}
+			catch (Exception ex)
+			{
+				Console.Error.WriteLine(ex);
+				Environment.Exit(-1);
+			}
 		}
 	}
 }

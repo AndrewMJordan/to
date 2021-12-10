@@ -12,7 +12,8 @@ namespace Andtech.To.Tests
 		[SetUp]
 		public void InitializeHotspots()
 		{
-			Environment.SetEnvironmentVariable("ANDTECH_TO_PATH", "TestFiles:TestFiles/hotspots", EnvironmentVariableTarget.Process);
+			var delimiter = ";";
+			Environment.SetEnvironmentVariable("ANDTECH_TO_PATH", $"TestFiles{delimiter}TestFiles/hotspots", EnvironmentVariableTarget.Process);
 			session = Session.Load();
 		}
 
@@ -29,9 +30,9 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector();
 			var ranks = selector.Order(session.Hotspots, query);
 
-			var first = ranks.First();
+			var result = ranks.First();
 
-			Assert.AreEqual("https://metacortex.com", first.Hotspot.URL);
+			Assert.AreEqual("https://metacortex.com", result.Hotspot.URL);
 		}
 
 		[Test]
@@ -41,9 +42,9 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector();
 			var ranks = selector.Order(session.Hotspots, query);
 
-			var first = ranks.First();
+			var result = ranks.First();
 
-			Assert.AreEqual("https://github.com/metacortex", first.Hotspot.URL);
+			Assert.AreEqual("https://github.com/metacortex", result.Hotspot.URL);
 		}
 
 		[Test]
@@ -53,9 +54,9 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector();
 			var ranks = selector.Order(session.Hotspots, query);
 
-			var first = ranks.First();
+			var result = ranks.First();
 
-			Assert.AreEqual("https://metacortex.org", first.Hotspot.URL);
+			Assert.AreEqual("https://metacortex.org", result.Hotspot.URL);
 		}
 
 		[Test]
@@ -65,9 +66,9 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector();
 			var ranks = selector.Order(session.Hotspots, query);
 
-			var first = ranks.First();
+			var result = ranks.First();
 
-			Assert.AreEqual("https://oss.metacortex.com", first.Hotspot.URL);
+			Assert.AreEqual("https://oss.metacortex.com", result.Hotspot.URL);
 		}
 
 		[Test]
@@ -77,9 +78,21 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector();
 			var ranks = selector.Order(session.Hotspots, query);
 
-			var first = ranks.First();
+			var result = ranks.First();
 
-			Assert.AreEqual("https://github.com/andtechstudios/snip", first.Hotspot.URL);
+			Assert.AreEqual("https://github.com/andtechstudios/snip", result.Hotspot.URL);
+		}
+
+		[Test]
+		public void SearchForDeepMatch()
+		{
+			var query = Query.Parse("cypher");
+			var selector = new HotspotSelector();
+			var ranks = selector.Order(session.Hotspots, query);
+
+			var result = ranks.First();
+
+			Assert.AreEqual("https://gitlab.com/morpheus/nebuchadnezzar/zion/cypher", result.Hotspot.URL);
 		}
 	}
 }
