@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -10,98 +8,91 @@ using System.Web;
 namespace Andtech.To
 {
 
-    internal class Rank
-    {
-        public Hotspot Hotspot { get; private set;}
-        public string[] Keywords { get; private set; }
-        public int MatchCount { get; private set; }
-
-        public static Rank ToRank(Hotspot hotspot, string query)
-        {
-            var keywords = hotspot.Keywords?.Split(',') ?? ExtractKeywords(hotspot.URL);
-
-            return new Rank()
-			{
-                Hotspot = hotspot,
-                Keywords = keywords,
-                MatchCount = GetKeywordMatchCount(hotspot),
-			};
-
-            int GetKeywordMatchCount(Hotspot hotspot)
-            {
-                var count = keywords.Count(keyword => query.Contains(keyword));
-
-                return count;
-            }
-
-            string[] ExtractKeywords(string url)
-            {
-                url = url.Replace("https://", string.Empty);
-                url = url.Replace(".com", string.Empty);
-                return url.Split('/', StringSplitOptions.RemoveEmptyEntries);
-            }
-        }
-    }
+	public struct Query
+	{
+		public string[] Keywords { get; set; }
+		public string Path { get; set; }
+		public string Search { get; set; }
+	}
 
 	class Program
-    {
+	{
 
-        static void Main(string[] tokens)
-        {
-            var input = string.Join(" ", tokens);
+		static void Main(string[] tokens)
+		{
+			var input = string.Join(" ", tokens);
+			var query = CreateQuery(input);
 
-            var hotspotMatch = Regex.Match(input, @"^(?<value>[^/?]+)");
-            var suffixMatch = Regex.Match(input, @"/(?<value>.+)");
-            var searchMatch = Regex.Match(input, @"\?(?<value>.+)");
+			var ranks = ReadHotspots()
+				.Select(x => Rank.ToRank(x, query))
+				.OrderByDescending(x => x.FuzzyMatchCount)
+				.ThenByDescending(x => x.Accuracy)
+				.ThenByDescending(x => x.Score);
 
-            var hotspotString = hotspotMatch.Groups["value"].Value.Trim();
-            var suffixString = suffixMatch.Success ? suffixMatch.Groups["value"].Value.Trim() : null;
-            var searchString = searchMatch.Success ? searchMatch.Groups["value"].Value.Trim() : null;
+			if (ranks.Any(x => x.FuzzyMatchCount > 0))
+			{
+				Open(ranks.First().Hotspot, query);
+			}
+			else
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("No matches");
+				Console.ResetColor();
+			}
+		}
 
-            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "to.json");
-            var content = File.ReadAllText(path);
+		static Query CreateQuery(string input)
+		{
+			var hotspotMatch = Regex.Match(input, @"^(?<value>[^/?]+)");
+			var suffixMatch = Regex.Match(input, @"/(?<value>.+)");
+			var searchMatch = Regex.Match(input, @"\?(?<value>.+)");
 
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var hotspots = JsonSerializer.Deserialize<Hotspot[]>(content, options);
+			var queryKeywords = Regex.Split(hotspotMatch.Groups["value"].Value, @"[\s]+")
+				.Select(x => x.Trim())
+				.ToArray();
 
-            var results = hotspots
-                .Select(x => Rank.ToRank(x, hotspotString))
-                .OrderByDescending(x => x.MatchCount)
-                .ThenByDescending(x => (double)x.MatchCount / x.Keywords.Length);
+			return new Query
+			{
+				Keywords = queryKeywords,
+				Path = suffixMatch.Success ? suffixMatch.Groups["value"].Value.Trim() : null,
+				Search = searchMatch.Success ? searchMatch.Groups["value"].Value.Trim() : null,
+			};
+		}
 
-            if (results.Any(x => x.MatchCount > 0))
-            {
-                var hotspot = results.First().Hotspot;
-                string url;
-                if (searchString is null || string.IsNullOrEmpty(hotspot.SearchURL))
-                {
-                    url = hotspot.URL;
-                }
-                else
-                {
-                    var query = searchString;
-                    query = HttpUtility.UrlEncode(query);
-                    url = Regex.Replace(hotspot.SearchURL, "%{query}", query);
-				}
+		static Hotspot[] ReadHotspots()
+		{
+			var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "to.json");
+			var content = File.ReadAllText(path);
 
-                if (suffixString != null)
-				{
-                    url = $"{url}/{suffixString}";
-				}
+			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+			return JsonSerializer.Deserialize<Hotspot[]>(content, options);
+		}
 
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(url);
-                //ShellUtility.OpenBrowser(url);
-            }
-            else
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("No matches");
-            }
-            Console.ResetColor();
-        }
+		static void Open(Hotspot hotspot, Query query)
+		{
+			string url;
+			if (query.Search is null || string.IsNullOrEmpty(hotspot.SearchURL))
+			{
+				url = hotspot.URL;
+			}
+			else
+			{
+				var queryString = query.Search;
+				queryString = HttpUtility.UrlEncode(queryString);
+				url = Regex.Replace(hotspot.SearchURL, "%{query}", queryString);
+			}
 
-        static bool IsPrefixOf(string x, string full) => Regex.IsMatch(full, $@"^{x}.*");
-    }
+			if (query.Path != null)
+			{
+				url = $"{url}/{query.Path}";
+			}
+
+			Console.ForegroundColor = ConsoleColor.Green;
+			Console.WriteLine(url);
+			Console.ResetColor();
+
+			ShellUtility.OpenBrowser(url);
+		}
+	}
 }
 
