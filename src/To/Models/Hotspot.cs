@@ -20,6 +20,8 @@ namespace Andtech.To
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             return JsonSerializer.Deserialize<Hotspot[]>(content, options);
         }
-    }
+
+        public override string ToString() => string.IsNullOrEmpty(Name) ? URL : Name;
+	}
 }
 
