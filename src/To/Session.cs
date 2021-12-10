@@ -9,7 +9,7 @@ namespace Andtech.To
 	public class Session
 	{
 		public Hotspot[] Hotspots { get; set; }
-		
+
 		public static Session Load()
 		{
 			var hotspots = new List<Hotspot>();
