@@ -4,7 +4,8 @@ using System.Text.RegularExpressions;
 
 namespace Andtech.To
 {
-	internal class Rank
+
+	public class Rank
     {
         public Hotspot Hotspot { get; private set;}
         public string[] Keywords { get; private set; }

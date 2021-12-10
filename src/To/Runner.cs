@@ -23,13 +23,10 @@ namespace Andtech.To
 		public async Task Run()
 		{
 			var input = string.Join(" ", options.Tokens);
-			var query = CreateQuery(input);
+			var query = Query.Parse(input);
 
-			var ranks = ReadHotspots()
-				.Select(x => Rank.ToRank(x, query))
-				.OrderByDescending(x => x.FuzzyMatchCount)
-				.ThenByDescending(x => x.Accuracy)
-				.ThenByDescending(x => x.Score);
+			var selector = new HotspotSelector();
+			var ranks = selector.Order(ReadHotspots(), query);
 
 			if (options.List)
 			{
@@ -51,24 +48,6 @@ namespace Andtech.To
 			}
 		}
 
-		static Query CreateQuery(string input)
-		{
-			var hotspotMatch = Regex.Match(input, @"^(?<value>[^/?]+)");
-			var suffixMatch = Regex.Match(input, @"/(?<value>.+)");
-			var searchMatch = Regex.Match(input, @"\?(?<value>.+)");
-
-			var queryKeywords = Regex.Split(hotspotMatch.Groups["value"].Value, @"[\s]+")
-				.Select(x => x.Trim())
-				.ToArray();
-
-			return new Query
-			{
-				Keywords = queryKeywords,
-				Path = suffixMatch.Success ? suffixMatch.Groups["value"].Value.Trim() : null,
-				Search = searchMatch.Success ? searchMatch.Groups["value"].Value.Trim() : null,
-			};
-		}
-
 		static List<Hotspot> ReadHotspots()
 		{
 			var prefix = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
@@ -86,15 +65,7 @@ namespace Andtech.To
 				toFiles.Add(toFile);
 			}
 
-			return toFiles.SelectMany(ReadHotspot).ToList();
-
-			Hotspot[] ReadHotspot(string path)
-			{
-				var content = File.ReadAllText(path);
-
-				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-				return JsonSerializer.Deserialize<Hotspot[]>(content, options);
-			}
+			return toFiles.SelectMany(Hotspot.Read).ToList();
 		}
 
 		void Open(Hotspot hotspot, Query query)
