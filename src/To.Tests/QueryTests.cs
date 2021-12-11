@@ -27,72 +27,70 @@ namespace Andtech.To.Tests
 		public void SearchRoot()
 		{
 			var query = Query.Parse("meta cortex");
-			var selector = new HotspotSelector();
-			var ranks = selector.Order(session.Hotspots, query);
+			var selector = new HotspotSelector(session.Hotspots);
+			selector.Find(query, out var result);
 
-			var result = ranks.First();
-
-			Assert.AreEqual("https://metacortex.com", result.Hotspot.URL);
+			Assert.AreEqual("https://metacortex.com", result.URL);
 		}
 
 		[Test]
 		public void SearchWithDomain()
 		{
 			var query = Query.Parse("github meta cortex");
-			var selector = new HotspotSelector();
-			var ranks = selector.Order(session.Hotspots, query);
+			var selector = new HotspotSelector(session.Hotspots);
+			selector.Find(query, out var result);
 
-			var result = ranks.First();
-
-			Assert.AreEqual("https://github.com/metacortex", result.Hotspot.URL);
+			Assert.AreEqual("https://github.com/metacortex", result.URL);
 		}
 
 		[Test]
 		public void SearchWithDomainExtension()
 		{
 			var query = Query.Parse("meta cortex org");
-			var selector = new HotspotSelector();
-			var ranks = selector.Order(session.Hotspots, query);
+			var selector = new HotspotSelector(session.Hotspots);
+			selector.Find(query, out var result);
 
-			var result = ranks.First();
-
-			Assert.AreEqual("https://metacortex.org", result.Hotspot.URL);
+			Assert.AreEqual("https://metacortex.org", result.URL);
 		}
 
 		[Test]
 		public void SearchWithDomainSubdomain()
 		{
 			var query = Query.Parse("oss meta cortex");
-			var selector = new HotspotSelector();
-			var ranks = selector.Order(session.Hotspots, query);
+			var selector = new HotspotSelector(session.Hotspots);
+			selector.Find(query, out var result);
 
-			var result = ranks.First();
-
-			Assert.AreEqual("https://oss.metacortex.com", result.Hotspot.URL);
+			Assert.AreEqual("https://oss.metacortex.com", result.URL);
 		}
 
 		[Test]
 		public void SearchWithSimilar()
 		{
 			var query = Query.Parse("snip");
-			var selector = new HotspotSelector();
-			var ranks = selector.Order(session.Hotspots, query);
+			var selector = new HotspotSelector(session.Hotspots);
+			selector.Find(query, out var result);
 
-			var result = ranks.First();
-
-			Assert.AreEqual("https://github.com/andtechstudios/snip", result.Hotspot.URL);
+			Assert.AreEqual("https://github.com/andtechstudios/snip", result.URL);
 		}
 
 		[Test]
 		public void SearchForDeepMatch()
 		{
 			var query = Query.Parse("cypher");
-			var selector = new HotspotSelector();
-			var ranks = selector.Order(session.Hotspots, query);
+			var selector = new HotspotSelector(session.Hotspots);
+			selector.Find(query, out var result);
 
-			var result = ranks.First();
+			Assert.AreEqual("https://gitlab.com/morpheus/nebuchadnezzar/zion/cypher", result.URL);
+		}
 
-			Assert.AreEqual("https://gitlab.com/morpheus/nebuchadnezzar/zion/cypher", result.Hotspot.URL);
+		[Test]
+		public void SearchByAlias()
+		{
+			var query = Query.Parse("gh");
+			var selector = new HotspotSelector(session.Hotspots);
+			selector.Find(query, out var result);
+
+			Assert.AreEqual("https://github.com", result.URL);
 		}
 	}
 }

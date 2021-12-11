@@ -18,34 +18,45 @@ namespace Andtech.To
 
 		public async Task Run()
 		{
+			var session = Session.Load();
+
 			var input = string.Join(" ", options.Tokens);
 			var query = Query.Parse(input);
 
-			var session = Session.Load();
-
-			var selector = new HotspotSelector();
-			var ranks = selector.Order(session.Hotspots, query);
+			var selector = new HotspotSelector(session.Hotspots);
 
 			if (options.List)
 			{
+				var ranks = selector.Order(query);
 
-				Console.WriteLine($"Q fuz H\tQ ex H\tAcc\tURL");
-				foreach (var rank in ranks.Take(5))
+				if (ranks.Any())
 				{
-					var accuracy = Math.Round(rank.Accuracy * 100);
-					Console.WriteLine($"{rank.CountOfQueryKeywordsAreFuzzy}\t{rank.CountOfQueryKeywordsAreExact}\t{accuracy}%\t{rank.Hotspot.URL}");
+					Console.WriteLine($"Q fuz H\tQ ex H\tAcc\tURL");
+					foreach (var rank in ranks.Take(5))
+					{
+						var accuracy = Math.Round(rank.Accuracy * 100);
+						Console.WriteLine($"{rank.CountOfQueryKeywordsAreFuzzy}\t{rank.CountOfQueryKeywordsAreExact}\t{accuracy}%\t{rank.Hotspot.URL}");
+					}
 				}
-			}
-
-			if (ranks.Any(x => x.CountOfHotspotKeywordsAreFuzzy > 0))
-			{
-				Open(ranks.First().Hotspot, query);
+				else
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("No matches");
+					Console.ResetColor();
+				}
 			}
 			else
 			{
-				Console.ForegroundColor = ConsoleColor.Red;
-				Console.WriteLine("No matches");
-				Console.ResetColor();
+				if (selector.Find(query, out var best))
+				{
+					Open(best, query);
+				}
+				else
+				{
+					Console.ForegroundColor = ConsoleColor.Red;
+					Console.WriteLine("No matches");
+					Console.ResetColor();
+				}
 			}
 		}
 

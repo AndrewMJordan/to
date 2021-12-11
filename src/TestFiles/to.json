@@ -22,5 +22,9 @@
 	},
 	{
 		"url": "https://github.com/andtechstudios/snip"
+	},
+	{
+		"url": "https://github.com",
+		"alias": "gh"
 	}
 ]
