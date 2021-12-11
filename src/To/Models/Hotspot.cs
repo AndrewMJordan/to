@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 
 namespace Andtech.To
@@ -13,12 +14,25 @@ namespace Andtech.To
 		public string SearchURL { get; set; }
 		public string Alias { get; set; }
 
+		private static readonly Hotspot[] Empty = Array.Empty<Hotspot>();
+
 		public static Hotspot[] Read(string path)
 		{
-			var content = File.ReadAllText(path);
+			try
+			{
+				var content = File.ReadAllText(path);
 
-			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-			return JsonSerializer.Deserialize<Hotspot[]>(content, options);
+				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+				return JsonSerializer.Deserialize<Hotspot[]>(content, options);
+			}
+			catch
+			{
+				Console.ForegroundColor = ConsoleColor.Yellow;
+				Console.Error.WriteLine($"{path} has malformed JSON. Skipping...");
+				Console.ResetColor();
+			}
+
+			return Empty;
 		}
 
 		public override string ToString() => string.IsNullOrEmpty(Name) ? URL : Name;
