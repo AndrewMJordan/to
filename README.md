@@ -1,6 +1,6 @@
 # To
 
-*Navigate anywhere on the internet from a terminal*
+*Navigate anywhere on the web from your terminal*
 
 [![badge](https://img.shields.io/github/v/tag/andtechstudios/to?label=nuget)](https://gitlab.com/andtech/pkg/-/packages)
 
