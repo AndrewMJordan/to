@@ -1,7 +1,7 @@
 name: Release package
 
 env:
-  NUGET_SOURCE_URL: ${{secrets.GITLAB_PKG_URL}}
+  NUGET_SOURCE_URL: ${{secrets.GITLAB_PKG_URL}}/nuget
   NUGET_PROJECT_DIR: src/To/To.csproj
   NUGET_USER_NAME: ${{secrets.GITLAB_ACCESS_TOKEN_OWNER}}
   NUGET_API_KEY: ${{secrets.GITLAB_ACCESS_TOKEN}}
