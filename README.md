@@ -2,7 +2,7 @@
 
 *Navigate anywhere on the web from your terminal*
 
-[![badge](https://img.shields.io/github/v/tag/andtechstudios/to?label=nuget)](https://gitlab.com/andtech/pkg/-/packages)
+[![badge](https://img.shields.io/github/v/tag/andtechstudios/to?label=nuget)](https://gitlab.com/andtech/pkg/-/packages?search[]=tp)
 
 # Installation
 > Check out installation instructions [here](https://gitlab.com/andtech/pkg)
