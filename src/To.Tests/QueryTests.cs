@@ -12,15 +12,14 @@ namespace Andtech.To.Tests
 		[SetUp]
 		public void InitializeHotspots()
 		{
-			var delimiter = ";";
-			Environment.SetEnvironmentVariable("ANDTECH_TO_PATH", $"TestFiles{delimiter}TestFiles/hotspots", EnvironmentVariableTarget.Process);
+			Environment.SetEnvironmentVariable("TOPATH", $"TestFiles", EnvironmentVariableTarget.Process);
 			session = Session.Load();
 		}
 
 		[Test]
 		public void SearchMiscellaneousHotspots()
 		{
-			Assert.IsTrue(session.Hotspots.Any(x => x.URL == "https://youtube.com"));
+			Assert.IsTrue(session.Hotspots.Any(x => x.url == "https://youtube.com"));
 		}
 
 		[Test]
@@ -30,7 +29,7 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector(session.Hotspots);
 			selector.Find(query, out var result);
 
-			Assert.AreEqual("https://metacortex.com", result.URL);
+			Assert.AreEqual("https://metacortex.com", result.url);
 		}
 
 		[Test]
@@ -40,7 +39,7 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector(session.Hotspots);
 			selector.Find(query, out var result);
 
-			Assert.AreEqual("https://github.com/metacortex", result.URL);
+			Assert.AreEqual("https://github.com/metacortex", result.url);
 		}
 
 		[Test]
@@ -50,7 +49,7 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector(session.Hotspots);
 			selector.Find(query, out var result);
 
-			Assert.AreEqual("https://metacortex.org", result.URL);
+			Assert.AreEqual("https://metacortex.org", result.url);
 		}
 
 		[Test]
@@ -60,7 +59,7 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector(session.Hotspots);
 			selector.Find(query, out var result);
 
-			Assert.AreEqual("https://oss.metacortex.com", result.URL);
+			Assert.AreEqual("https://oss.metacortex.com", result.url);
 		}
 
 		[Test]
@@ -70,7 +69,7 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector(session.Hotspots);
 			selector.Find(query, out var result);
 
-			Assert.AreEqual("https://github.com/andtechstudios/snip", result.URL);
+			Assert.AreEqual("https://github.com/andtechstudios/snip", result.url);
 		}
 
 		[Test]
@@ -80,7 +79,7 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector(session.Hotspots);
 			selector.Find(query, out var result);
 
-			Assert.AreEqual("https://gitlab.com/morpheus/nebuchadnezzar/zion/cypher", result.URL);
+			Assert.AreEqual("https://gitlab.com/morpheus/nebuchadnezzar/zion/cypher", result.url);
 		}
 
 		[Test]
@@ -90,7 +89,7 @@ namespace Andtech.To.Tests
 			var selector = new HotspotSelector(session.Hotspots);
 			selector.Find(query, out var result);
 
-			Assert.AreEqual("https://github.com", result.URL);
+			Assert.AreEqual("https://github.com", result.url);
 		}
 	}
 }

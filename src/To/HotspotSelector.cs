@@ -31,8 +31,8 @@ namespace Andtech.To
 		public bool TryGetFromAlias(Query query, out Hotspot result)
 		{
 			result = hotspots
-				.Where(x => !string.IsNullOrEmpty(x.Alias))
-				.FirstOrDefault(x => x.Alias == query.RawKeywords);
+				.Where(x => !string.IsNullOrEmpty(x.alias))
+				.FirstOrDefault(x => x.alias == query.RawKeywords);
 
 			return result != default;
 		}
