@@ -1,0 +1,7 @@
+[
+	{
+		"url": "https://gitlab.com",
+		"alias": "gitlab",
+		"searchURL": "https://gitlab.com/?name=%{query}"
+	}
+]

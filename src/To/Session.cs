@@ -17,19 +17,14 @@ namespace Andtech.To
 		{
 			var hotspots = new List<Hotspot>();
 
-			var path = Environment.GetEnvironmentVariable("ANDTECH_TO_PATH", EnvironmentVariableTarget.Process);
+			var path = Environment.GetEnvironmentVariable("TOPATH");
 			var directories = string.IsNullOrEmpty(path) ? Enumerable.Empty<string>() : path.Split(PathDelimiter, StringSplitOptions.RemoveEmptyEntries);
-			var toFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "to.json");
-
-			if (File.Exists(toFile))
-			{
-				hotspots.AddRange(Hotspot.Read(toFile));
-			}
 
 			foreach (var directory in directories)
 			{
-				var files = Directory.EnumerateFiles(directory, "*.json", SearchOption.AllDirectories);
-				hotspots.AddRange(files.SelectMany(Hotspot.Read));
+				var files = Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)
+					.Concat(Directory.EnumerateFiles(directory, "*.yaml", SearchOption.TopDirectoryOnly));
+				hotspots.AddRange(files.SelectMany(Hotspot.ReadMany));
 			}
 
 			return new Session

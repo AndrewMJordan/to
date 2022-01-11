@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<OutputType>Exe</OutputType>
-		<TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
+		<TargetFrameworks>net6.0;</TargetFrameworks>
 		<Version>0.3.0.0</Version>
 		<Authors>Andtech Studios</Authors>
 		<Company>Andtech Studios</Company>
@@ -41,6 +41,12 @@
 	  <PackageReference Include="CommandLineParser" Version="2.9.0-preview1" />
 	  <PackageReference Include="FuzzySharp" Version="2.0.2" />
 	  <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
+	  <PackageReference Include="YamlDotNet" Version="11.2.1" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+	  <PackageReference Include="Andtech.Common">
+	    <Version>0.5.0</Version>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>

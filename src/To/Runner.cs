@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Andtech.Common;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,14 +36,12 @@ namespace Andtech.To
 					foreach (var rank in ranks.Take(5))
 					{
 						var accuracy = Math.Round(rank.Accuracy * 100);
-						Console.WriteLine($"{rank.CountOfQueryKeywordsAreFuzzy}\t{rank.CountOfQueryKeywordsAreExact}\t{accuracy}%\t{rank.Hotspot.URL}");
+						Console.WriteLine($"{rank.CountOfQueryKeywordsAreFuzzy}\t{rank.CountOfQueryKeywordsAreExact}\t{accuracy}%\t{rank.Hotspot.url}");
 					}
 				}
 				else
 				{
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("No matches");
-					Console.ResetColor();
+					Console.WriteLine("No Matches", ConsoleColor.Red);
 				}
 			}
 			else
@@ -53,9 +52,7 @@ namespace Andtech.To
 				}
 				else
 				{
-					Console.ForegroundColor = ConsoleColor.Red;
-					Console.WriteLine("No matches");
-					Console.ResetColor();
+					Console.WriteLine("No Matches", ConsoleColor.Red);
 				}
 			}
 		}
@@ -63,15 +60,15 @@ namespace Andtech.To
 		void Open(Hotspot hotspot, Query query)
 		{
 			string url;
-			if (query.Search is null || string.IsNullOrEmpty(hotspot.SearchURL))
+			if (query.Search is null || string.IsNullOrEmpty(hotspot.searchURL))
 			{
-				url = hotspot.URL;
+				url = hotspot.url;
 			}
 			else
 			{
 				var queryString = query.Search;
 				queryString = HttpUtility.UrlEncode(queryString);
-				url = Regex.Replace(hotspot.SearchURL, "%{query}", queryString);
+				url = Regex.Replace(hotspot.searchURL, "%{query}", queryString);
 			}
 
 			if (query.Path != null)
@@ -79,9 +76,7 @@ namespace Andtech.To
 				url = $"{url}/{query.Path}";
 			}
 
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine(url);
-			Console.ResetColor();
+			Log.WriteLine(url, ConsoleColor.Green);
 
 			if (!options.DryRun)
 			{

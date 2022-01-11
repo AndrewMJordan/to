@@ -1,0 +1,7 @@
+- url: https://allsafe.com
+- url: https://github.com/allsafe
+  queryURL: https://github.com/search?q=user%3A%40me+%{query}
+  alias: gh
+- url: https://gitlab.com/allsafe
+  queryURL: https://gitlab.com/?name=%{query}
+  alias: gl

@@ -21,13 +21,13 @@ namespace Andtech.To
 		public static Rank ToRank(Hotspot hotspot, Query query)
 		{
 			string[] keywords;
-			if (string.IsNullOrEmpty(hotspot.Keywords))
+			if (string.IsNullOrEmpty(hotspot.keywords))
 			{
-				keywords = ExtractKeywords(hotspot.URL);
+				keywords = ExtractKeywords(hotspot.url);
 			}
 			else
 			{
-				keywords = hotspot.Keywords.Split(',');
+				keywords = hotspot.keywords.Split(',');
 			}
 
 			var rank = new Rank()

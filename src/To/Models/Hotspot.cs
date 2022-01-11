@@ -1,41 +1,54 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Andtech.To
 {
 
 	public class Hotspot
 	{
-		public string Name { get; set; }
-		public string Keywords { get; set; }
-		public string URL { get; set; }
-		public int Priority { get; set; }
-		public string SearchURL { get; set; }
-		public string Alias { get; set; }
+		public string name { get; set; }
+		public string keywords { get; set; }
+		public string url { get; set; }
+		public int priority { get; set; }
+		public string searchURL { get; set; }
+		public string alias { get; set; }
 
-		private static readonly Hotspot[] Empty = Array.Empty<Hotspot>();
-
-		public static Hotspot[] Read(string path)
+        public static Hotspot[] ReadMany(string path)
 		{
-			try
+			var content = File.ReadAllText(path);
+			var extension = Path.GetExtension(path);
+			switch (extension)
 			{
-				var content = File.ReadAllText(path);
-
-				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-				return JsonSerializer.Deserialize<Hotspot[]>(content, options);
+				case ".yaml":
+				case ".yml":
+					return ParseYaml(content);
+				case ".json":
+					return ParseJson(content);
+				default:
+					throw new ArgumentException($"File type {extension} not supported");
 			}
-			catch
-			{
-				Console.ForegroundColor = ConsoleColor.Yellow;
-				Console.Error.WriteLine($"{path} has malformed JSON. Skipping...");
-				Console.ResetColor();
-			}
-
-			return Empty;
 		}
 
-		public override string ToString() => string.IsNullOrEmpty(Name) ? URL : Name;
+		public static Hotspot[] ParseYaml(string content)
+        {
+			var deserializer = new DeserializerBuilder()
+				.WithNamingConvention(CamelCaseNamingConvention.Instance)
+				.Build();
+
+			return deserializer.Deserialize<List<Hotspot>>(content).ToArray();
+		}
+
+		public static Hotspot[] ParseJson(string content)
+		{
+			var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+			return JsonSerializer.Deserialize<Hotspot[]>(content, options);
+		}
+
+		public override string ToString() => string.IsNullOrEmpty(name) ? url : name;
 	}
 }
 
