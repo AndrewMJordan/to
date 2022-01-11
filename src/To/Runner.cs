@@ -32,16 +32,16 @@ namespace Andtech.To
 
 				if (ranks.Any())
 				{
-					Console.WriteLine($"Q fuz H\tQ ex H\tAcc\tURL");
+					Log.WriteLine($"Q fuz H\tQ ex H\tAcc\tURL", Verbosity.silly);
 					foreach (var rank in ranks.Take(5))
 					{
 						var accuracy = Math.Round(rank.Accuracy * 100);
-						Console.WriteLine($"{rank.CountOfQueryKeywordsAreFuzzy}\t{rank.CountOfQueryKeywordsAreExact}\t{accuracy}%\t{rank.Hotspot.url}");
+						Log.WriteLine($"{rank.CountOfQueryKeywordsAreFuzzy}\t{rank.CountOfQueryKeywordsAreExact}\t{accuracy}%\t{rank.Hotspot.url}", Verbosity.silly);
 					}
 				}
 				else
 				{
-					Console.WriteLine("No Matches", ConsoleColor.Red);
+					Log.WriteLine("No Matches", ConsoleColor.Red);
 				}
 			}
 			else
@@ -52,7 +52,7 @@ namespace Andtech.To
 				}
 				else
 				{
-					Console.WriteLine("No Matches", ConsoleColor.Red);
+					Log.WriteLine("No Matches", ConsoleColor.Red);
 				}
 			}
 		}
