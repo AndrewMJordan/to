@@ -45,7 +45,7 @@
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
 	  <PackageReference Include="Andtech.Common">
-	    <Version>0.5.0</Version>
+	    <Version>0.6.0</Version>
 	  </PackageReference>
 	</ItemGroup>
 
