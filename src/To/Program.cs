@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using Andtech.Common;
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,12 +12,14 @@ namespace Andtech.To
 		[Value(0)]
 		public IList<string> Tokens { get; set; }
 
-		[Option("verbose", HelpText = "Print verbose messages.")]
-		public bool Verbose { get; set; }
 		[Option('n', "dry-run", HelpText = "Dry run the command.")]
 		public bool DryRun { get; set; }
 		[Option("list", HelpText = "List the results.")]
 		public bool List { get; set; }
+		[Option('v', "verbosity", HelpText = "Verbosity of logging")]
+		public Verbosity Verbosity { get; set; }
+		[Option("verbose", HelpText = "Print verbose messages.")]
+		public bool Verbose { get; set; }
 	}
 
 	class Program
@@ -30,6 +33,7 @@ namespace Andtech.To
 
 		public static async Task OnParse(Options options)
 		{
+			Log.Verbosity = options.Verbose ? Verbosity.verbose : options.Verbosity;
 			try
 			{
 				var runner = new Runner(options);
