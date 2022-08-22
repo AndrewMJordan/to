@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Andtech.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,11 +16,16 @@ namespace Andtech.To
 
 		public static Session Load()
 		{
+			List<string> directories = new List<string>();
+			if (ShellUtility.Find(Environment.CurrentDirectory, ".to", out var toDirectory, FindOptions.RecursiveUp))
+			{
+				directories.Add(toDirectory);
+			}
+
+			var toPath = Environment.GetEnvironmentVariable("TOPATH");
+			directories.AddRange(toPath.Split(PathDelimiter, StringSplitOptions.RemoveEmptyEntries));
+			
 			var hotspots = new List<Hotspot>();
-
-			var path = Environment.GetEnvironmentVariable("TOPATH");
-			var directories = string.IsNullOrEmpty(path) ? Enumerable.Empty<string>() : path.Split(PathDelimiter, StringSplitOptions.RemoveEmptyEntries);
-
 			foreach (var directory in directories)
 			{
 				var files = Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)
