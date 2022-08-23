@@ -20,6 +20,8 @@ namespace Andtech.To
 		public Verbosity Verbosity { get; set; }
 		[Option("verbose", HelpText = "Print verbose messages.")]
 		public bool Verbose { get; set; }
+		[Option('g', "global", HelpText = "Ignore local 'to' repositories.")]
+		public bool UseGlobalMode { get; set; }
 	}
 
 	class Program
@@ -34,6 +36,7 @@ namespace Andtech.To
 		public static async Task OnParse(Options options)
 		{
 			Log.Verbosity = options.Verbose ? Verbosity.verbose : options.Verbosity;
+
 			try
 			{
 				var runner = new Runner(options);

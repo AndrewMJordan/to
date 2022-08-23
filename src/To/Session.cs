@@ -11,15 +11,20 @@ namespace Andtech.To
 	public class Session
 	{
 		public Hotspot[] Hotspots { get; set; }
+		public static bool UseGlobalMode { get; set; }
 
 		private static readonly char PathDelimiter = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ';' : ':';
 
 		public static Session Load()
 		{
 			List<string> directories = new List<string>();
-			if (ShellUtility.Find(Environment.CurrentDirectory, ".to", out var toDirectory, FindOptions.RecursiveUp))
+
+			if (!UseGlobalMode)
 			{
-				directories.Add(toDirectory);
+				if (ShellUtility.Find(Environment.CurrentDirectory, ".to", out var toDirectory, FindOptions.RecursiveUp))
+				{
+					directories.Add(toDirectory);
+				}
 			}
 
 			var toPath = Environment.GetEnvironmentVariable("TOPATH");

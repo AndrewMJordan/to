@@ -19,6 +19,7 @@ namespace Andtech.To
 
 		public async Task Run()
 		{
+			Session.UseGlobalMode = options.UseGlobalMode;
 			var session = Session.Load();
 
 			var input = string.Join(" ", options.Tokens);
