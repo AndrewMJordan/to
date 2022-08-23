@@ -34,7 +34,8 @@ namespace Andtech.To
 			foreach (var directory in directories)
 			{
 				var files = Directory.EnumerateFiles(directory, "*.json", SearchOption.TopDirectoryOnly)
-					.Concat(Directory.EnumerateFiles(directory, "*.yaml", SearchOption.TopDirectoryOnly));
+					.Concat(Directory.EnumerateFiles(directory, "*.yaml", SearchOption.TopDirectoryOnly))
+					.Concat(Directory.EnumerateFiles(directory, "*.yml", SearchOption.TopDirectoryOnly));
 				hotspots.AddRange(files.SelectMany(Hotspot.ReadMany));
 			}
 
