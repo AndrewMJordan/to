@@ -79,6 +79,11 @@ namespace Andtech.To
 
 			Log.WriteLine(url, ConsoleColor.Green);
 
+			if (!string.IsNullOrEmpty(hotspot.executable))
+			{
+				Environment.SetEnvironmentVariable("BROWSER", hotspot.executable);
+			}
+
 			if (!options.DryRun)
 			{
 				ShellUtility.OpenBrowser(url);

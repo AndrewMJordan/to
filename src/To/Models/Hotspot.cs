@@ -16,8 +16,9 @@ namespace Andtech.To
 		public int priority { get; set; }
 		public string searchURL { get; set; }
 		public string alias { get; set; }
+		public string executable { get; set; }
 
-        public static Hotspot[] ReadMany(string path)
+		public static Hotspot[] ReadMany(string path)
 		{
 			var content = File.ReadAllText(path);
 			var extension = Path.GetExtension(path);
