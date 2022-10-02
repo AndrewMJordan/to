@@ -4,7 +4,7 @@
 		<Authors>Andtech Studios</Authors>
 		<RepositoryUrl>https://github.com/andtechstudios/to</RepositoryUrl>
 		<Copyright>"© $(CompanyName) $([System.DateTime]::Now.ToString(`yyyy`))"</Copyright>
-		
+
 		<TargetFramework>net6.0</TargetFramework>
 		<PackageId>Andtech.To</PackageId>
 		<RootNamespace>$(PackageId)</RootNamespace>
