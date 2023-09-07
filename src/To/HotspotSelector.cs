@@ -6,6 +6,7 @@ namespace Andtech.To
 
 	public class HotspotSelector
 	{
+		
 		private readonly IEnumerable<Hotspot> hotspots;
 
 		public HotspotSelector(IEnumerable<Hotspot> hotspots)

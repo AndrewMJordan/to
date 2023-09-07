@@ -1,5 +1,7 @@
 ﻿using Andtech.Common;
+using Andtech.Common.Text.SentenceExpressions;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -23,11 +25,19 @@ namespace Andtech.To
 			var session = Session.Load();
 
 			var input = string.Join(" ", options.Tokens);
-			var query = Query.Parse(input);
-
+			var query = Query.Parse(input.ToLower());
 			var selector = new HotspotSelector(session.Hotspots);
 
 			if (options.List)
+			{
+				List();
+			}
+			else
+			{
+				Search();
+			}
+
+			void List()
 			{
 				var ranks = selector.Order(query);
 
@@ -45,36 +55,91 @@ namespace Andtech.To
 					Log.WriteLine("No Matches", ConsoleColor.Red);
 				}
 			}
-			else
+
+			void Search()
 			{
+				// Try README
+				if (!options.UseGlobalMode)
+				{
+					if (SearchReadme(query))
+					{
+						return;
+					}
+				}
+
+				// Fallback
 				if (selector.Find(query, out var best))
 				{
 					Open(best, query);
+					return;
 				}
-				else
+
+				Log.WriteLine("No Matches", ConsoleColor.Red);
+			}
+		}
+
+		class HotspotOption : ISearchable
+		{
+			public string Text { get; private set; }
+			public Hotspot Hotspot { get; private set; }
+
+			public HotspotOption(string key, Hotspot value)
+			{
+				Text = key;
+				Hotspot = value;
+			}
+
+		}
+		bool SearchReadme(Query query)
+		{
+			if (ShellUtil.Find(Environment.CurrentDirectory, "README.md", out var path, FindOptions.RecursiveUp))
+			{
+
+				var text = File.ReadAllText(path);
+				var regex = new Regex(@"\[(?<title>[\w\s]+)]\((?<url>\w+://.+)\)");
+
+				var matches = regex.Matches(text);
+				var options = matches
+					.Select(ToHotspot)
+					.Select(x => new HotspotOption(x.name, x));
+
+				Hotspot ToHotspot(System.Text.RegularExpressions.Match match)
 				{
-					Log.WriteLine("No Matches", ConsoleColor.Red);
+					return new Hotspot()
+					{
+						name = match.Groups["title"].Value.ToLower(),
+						url = match.Groups["url"].Value,
+					};
+				}
+
+				var search = new RankedSearch<HotspotOption>(query.ToString());
+				if (search.Search(options, out var best))
+				{
+					Open(best.Hotspot, query);
+					return true;
 				}
 			}
+
+			return false;
 		}
 
 		void Open(Hotspot hotspot, Query query)
 		{
 			string url;
-			if (query.Search is null || string.IsNullOrEmpty(hotspot.searchURL))
+			if (query.SearchTerm is null || string.IsNullOrEmpty(hotspot.searchURL))
 			{
 				url = hotspot.url;
 			}
 			else
 			{
-				var queryString = query.Search;
+				var queryString = query.SearchTerm;
 				queryString = HttpUtility.UrlEncode(queryString);
 				url = Regex.Replace(hotspot.searchURL, "%{query}", queryString);
 			}
 
-			if (query.Path != null)
+			if (query.SubPath != null)
 			{
-				url = $"{url}/{query.Path}";
+				url = $"{url}/{query.SubPath}";
 			}
 
 			Log.WriteLine(url, ConsoleColor.Green);
@@ -86,7 +151,7 @@ namespace Andtech.To
 
 			if (!options.DryRun)
 			{
-				ShellUtility.OpenBrowser(url);
+				ShellUtil.OpenBrowser(url);
 			}
 		}
 	}

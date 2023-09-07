@@ -21,7 +21,7 @@ namespace Andtech.To
 
 			if (!UseGlobalMode)
 			{
-				if (ShellUtility.Find(Environment.CurrentDirectory, ".to", out var toDirectory, FindOptions.RecursiveUp))
+				if (ShellUtil.Find(Environment.CurrentDirectory, ".to", out var toDirectory, FindOptions.RecursiveUp))
 				{
 					directories.Add(toDirectory);
 				}

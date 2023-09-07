@@ -3,12 +3,13 @@ using System.Text.RegularExpressions;
 
 namespace Andtech.To
 {
+
 	public struct Query
 	{
 		public string RawKeywords { get; private set; }
 		public string[] Keywords { get; set; }
-		public string Path { get; set; }
-		public string Search { get; set; }
+		public string SearchTerm { get; set; }
+		public string SubPath { get; set; }
 
 		public static Query Parse(string input)
 		{
@@ -25,10 +26,12 @@ namespace Andtech.To
 			{
 				RawKeywords = rawKeywords,
 				Keywords = queryKeywords,
-				Path = suffixMatch.Success ? suffixMatch.Groups["value"].Value.Trim() : null,
-				Search = searchMatch.Success ? searchMatch.Groups["value"].Value.Trim() : null,
+				SearchTerm = searchMatch.Success ? searchMatch.Groups["value"].Value.Trim() : null,
+				SubPath = suffixMatch.Success ? suffixMatch.Groups["value"].Value.Trim() : null,
 			};
 		}
+
+		public override string ToString() => string.Join(" ", Keywords);
 	}
 }
 
